@@ -1,6 +1,6 @@
 # Stockroom
 
-An inventory dashboard with full CRUD. Express.js backend, SQLite database (via `better-sqlite3`), and a dependency-free vanilla JS frontend.
+An inventory dashboard with full CRUD. Express.js backend, SQLite database (Node's built-in `node:sqlite`, no native build needed), and a dependency-free vanilla JS frontend.
 
 ## Features
 
@@ -9,6 +9,10 @@ An inventory dashboard with full CRUD. Express.js backend, SQLite database (via 
 - Units-by-category breakdown
 - Search by name or SKU, filter by category
 - Server-side validation, unique SKUs, light and dark themes
+
+## Requirements
+
+Node.js 22.13 or newer.
 
 ## Quick start
 

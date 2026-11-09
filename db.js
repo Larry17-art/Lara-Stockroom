@@ -1,12 +1,12 @@
-const Database = require('better-sqlite3');
+const { DatabaseSync } = require('node:sqlite');
 const fs = require('fs');
 const path = require('path');
 
 const dbPath = process.env.DB_PATH || path.join(__dirname, 'data', 'dashboard.db');
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
-const db = new Database(dbPath);
-db.pragma('journal_mode = WAL');
+const db = new DatabaseSync(dbPath);
+db.exec('PRAGMA journal_mode = WAL');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS products (
@@ -36,7 +36,14 @@ if (db.prepare('SELECT COUNT(*) AS n FROM products').get().n === 0) {
     ['Stoneware mug', 'KIT-030', 'Kitchen', 14, 64],
     ['Cork yoga mat', 'FIT-002', 'Fitness', 58, 0],
   ];
-  db.transaction(() => seed.forEach((row) => insert.run(...row)))();
+  db.exec('BEGIN');
+  try {
+    seed.forEach((row) => insert.run(...row));
+    db.exec('COMMIT');
+  } catch (err) {
+    db.exec('ROLLBACK');
+    throw err;
+  }
 }
 
 module.exports = db;

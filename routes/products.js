@@ -52,7 +52,7 @@ router.post('/', (req, res) => {
       .run(value);
     res.status(201).json(db.prepare('SELECT * FROM products WHERE id = ?').get(info.lastInsertRowid));
   } catch (err) {
-    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE')
+    if (/UNIQUE constraint failed/.test(err.message))
       return res.status(409).json({ error: `SKU "${value.sku}" is already in use.` });
     throw err;
   }
@@ -74,7 +74,7 @@ router.put('/:id', (req, res) => {
     if (!info.changes) return res.status(404).json({ error: 'Product not found.' });
     res.json(db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id));
   } catch (err) {
-    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE')
+    if (/UNIQUE constraint failed/.test(err.message))
       return res.status(409).json({ error: `SKU "${value.sku}" is already in use.` });
     throw err;
   }
